@@ -105,8 +105,8 @@ async def on_ready() -> None:
 
     init_db(DB_PATH)
 
-    setup_commands(bot, _bot_start_time)
     guild = discord.Object(id=DISCORD_GUILD_ID)
+    setup_commands(bot, _bot_start_time, guild=guild)
     synced = await bot.tree.sync(guild=guild)
     _log.info("Synced %d slash commands to guild %d", len(synced), DISCORD_GUILD_ID)
 

@@ -183,12 +183,14 @@ class PipelineGroup(app_commands.Group):
         )
 
 
-def setup(bot: commands.Bot, bot_start_time: datetime) -> None:
+def setup(bot: commands.Bot, bot_start_time: datetime, guild: discord.Object | None = None) -> None:
     """Register all slash command groups on the bot's command tree.
 
     Args:
         bot: The Discord bot instance.
         bot_start_time: UTC datetime when the bot started.
+        guild: Guild object to scope commands to. If provided, commands are
+               registered guild-scoped (instant sync). If None, registered globally.
     """
-    bot.tree.add_command(PulseGroup())
-    bot.tree.add_command(PipelineGroup(bot_start_time))
+    bot.tree.add_command(PulseGroup(), guild=guild)
+    bot.tree.add_command(PipelineGroup(bot_start_time), guild=guild)
