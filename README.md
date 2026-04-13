@@ -17,31 +17,94 @@ The pipeline runs on a configurable interval (default: every hour). Slash comman
 
 ## Step 1 — Discord setup (one-time, manual)
 
-Before running `make setup`, you need a Discord bot and server. This takes about 10 minutes.
+Before running `make setup`, you need a Discord bot and a server for it to post into. This takes about 10 minutes. Follow each step exactly.
+
+---
 
 ### 1a. Create a Discord server
-1. Open Discord → click **+** in the left sidebar → **Create My Own** → **For me and my friends**
-2. Name it anything (e.g. `TechPulse Jobs`)
-3. Create a text channel called `#jobs`
+
+1. Open the Discord app (or go to [discord.com](https://discord.com) in your browser and log in)
+2. Look at the left sidebar — you'll see a column of circular server icons. Scroll to the bottom of that column and click the **+** button (it says "Add a Server" when you hover over it)
+3. A popup appears. Click **"Create My Own"**
+4. Click **"For me and my friends"**
+5. Give it a name — e.g. `TechPulse Jobs` — then click **Create**
+6. Your new server will appear in the left sidebar. You're now inside it.
+
+**Create the jobs channel:**
+
+7. On the left side of your server you'll see a **"Text Channels"** section with a `#general` channel already there
+8. Click the **+** icon that appears when you hover next to "Text Channels"
+9. Leave channel type as **"Text Channel"**
+10. Name it `jobs` (Discord adds the `#` automatically)
+11. Click **Create Channel**
+
+---
 
 ### 1b. Create the bot
-1. Go to [discord.com/developers/applications](https://discord.com/developers/applications)
-2. Click **New Application** → name it `TechPulse Bot` → Create
-3. Left sidebar → **Bot**
-4. Click **Reset Token** → copy it (you only see it once — save it)
-5. Under **Privileged Gateway Intents**, enable **Message Content Intent** ✅
+
+1. Open a new browser tab and go to [discord.com/developers/applications](https://discord.com/developers/applications)
+2. Log in with your Discord account if prompted
+3. Click the blue **"New Application"** button in the top right
+4. In the popup, type the name `TechPulse Bot` and click **Create**
+5. You're now on the application settings page. On the **left sidebar**, click **"Bot"**
+6. You'll see a section called **"Token"**. Click **"Reset Token"** → click **"Yes, do it!"** to confirm
+7. Your bot token appears — it looks like a long string of random characters. **Click "Copy" immediately** — you will not be able to see it again after you leave this page. Paste it somewhere safe (a notes app is fine for now).
+8. Scroll down on the same page until you see **"Privileged Gateway Intents"**
+9. Find **"Message Content Intent"** and click the toggle to turn it **ON** (it turns green)
+10. Click **"Save Changes"** at the bottom of the page
+
+---
 
 ### 1c. Invite the bot to your server
-1. Left sidebar → **OAuth2** → **URL Generator**
-2. Scopes: check `bot` and `applications.commands`
-3. Bot Permissions: check `Send Messages`, `Embed Links`, `Read Message History`
-4. Copy the generated URL → open in browser → select your server → Authorize
 
-### 1d. Get your IDs
-Enable Developer Mode first: Discord Settings → Advanced → Developer Mode ✅
+1. Still on the Developer Portal, look at the **left sidebar** and click **"OAuth2"**
+2. Under OAuth2, click **"URL Generator"** (it appears as a sub-item under OAuth2)
+3. You'll see a **"Scopes"** section with checkboxes. Check these two:
+   - ✅ `bot`
+   - ✅ `applications.commands`
+4. A new section called **"Bot Permissions"** will appear below. Check these three:
+   - ✅ `Send Messages`
+   - ✅ `Embed Links`
+   - ✅ `Read Message History`
+5. Scroll to the very bottom of the page — you'll see a **"Generated URL"** box with a long link in it. Click **"Copy"**
+6. Open a new browser tab, paste the URL into the address bar, and press Enter
+7. A Discord authorisation page appears. Click the dropdown under **"Add to Server"** and select your `TechPulse Jobs` server
+8. Click **"Continue"** → then **"Authorize"** → complete the CAPTCHA if one appears
+9. You'll see a success message. Your bot is now in your server.
 
-- **Guild (Server) ID** — right-click your server name → Copy Server ID
-- **Channel ID** — right-click `#jobs` → Copy Channel ID
+---
+
+### 1d. Get your server and channel IDs
+
+To copy IDs in Discord, you first need to enable **Developer Mode**:
+
+1. Click the **gear icon ⚙️** in the bottom-left corner of Discord (next to your username) to open User Settings
+2. In the left sidebar, scroll down and click **"Advanced"**
+3. Find **"Developer Mode"** and toggle it **ON**
+4. Close settings (press Escape or click the X)
+
+**Get the Guild (Server) ID:**
+
+5. Look at the left sidebar — find your `TechPulse Jobs` server icon
+6. **Right-click** on the server icon
+7. A menu appears at the bottom — click **"Copy Server ID"**
+8. Paste it somewhere safe — this is your **Guild ID**
+
+**Get the Channel ID:**
+
+9. In your `TechPulse Jobs` server, look at the left sidebar for the `#jobs` channel you created
+10. **Right-click** on `#jobs`
+11. In the menu that appears, click **"Copy Channel ID"**
+12. Paste it somewhere safe — this is your **Channel ID**
+
+---
+
+You now have three values ready:
+- ✅ Bot Token
+- ✅ Guild (Server) ID
+- ✅ Channel ID
+
+Proceed to Step 2 below.
 
 ---
 
