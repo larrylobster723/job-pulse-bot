@@ -28,23 +28,46 @@ def _format_salary(salary_min: int | None, salary_max: int | None) -> str | None
         salary_max: Annual maximum in USD, or None.
 
     Returns:
-        Formatted string like "$80K–$120K", or None if both are absent.
+        Formatted string like "$80K–$120K", or None if both are absent or zero.
     """
-    if salary_min is None and salary_max is None:
+    # Treat 0 same as None — no meaningful salary data
+    min_val = salary_min if salary_min else None
+    max_val = salary_max if salary_max else None
+
+    if min_val is None and max_val is None:
         return None
 
     def _fmt(value: int) -> str:
         return f"${value // 1000}K"
 
-    if salary_min is not None and salary_max is not None:
-        if salary_min == salary_max:
-            return _fmt(salary_min)
-        return f"{_fmt(salary_min)}–{_fmt(salary_max)}"
-    if salary_min is not None:
-        return f"{_fmt(salary_min)}+"
-    if salary_max is not None:
-        return f"Up to {_fmt(salary_max)}"
+    if min_val is not None and max_val is not None:
+        if min_val == max_val:
+            return _fmt(min_val)
+        return f"{_fmt(min_val)}–{_fmt(max_val)}"
+    if min_val is not None:
+        return f"{_fmt(min_val)}+"
+    if max_val is not None:
+        return f"Up to {_fmt(max_val)}"
     return None
+
+
+def _format_timestamp(ts: str | None) -> str:
+    """Format an ISO timestamp to a human-readable string.
+
+    Args:
+        ts: ISO 8601 timestamp string or None.
+
+    Returns:
+        Formatted string like "Apr 13, 2026 04:08 UTC", or "?" if unparseable.
+    """
+    if not ts:
+        return "?"
+    try:
+        from datetime import datetime, timezone
+        dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+        return dt.astimezone(timezone.utc).strftime("%b %d, %Y %H:%M UTC")
+    except (ValueError, AttributeError):
+        return ts
 
 
 def build_job_embed(job: dict) -> discord.Embed:
@@ -119,13 +142,16 @@ def build_status_embed(status: dict) -> discord.Embed:
 
     last_run = status.get("last_run")
     if last_run:
+        finished = _format_timestamp(
+            last_run.get("finished_at") or last_run.get("started_at")
+        )
         embed.add_field(
             name="Last Pipeline Run",
             value=(
                 f"Agent: **{last_run.get('agent', '?')}**\n"
                 f"Status: {last_run.get('status', '?')}\n"
                 f"Jobs: {last_run.get('jobs_processed', 0)}\n"
-                f"At: {last_run.get('finished_at') or last_run.get('started_at', '?')}"
+                f"At: {finished}"
             ),
             inline=False,
         )
