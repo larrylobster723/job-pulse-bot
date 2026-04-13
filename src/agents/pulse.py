@@ -16,7 +16,7 @@ from src.db.queries import (
     finish_pipeline_run,
     get_unscored_jobs,
     insert_pipeline_run,
-    update_job_pulse_score,
+    update_pulse_score,
 )
 
 try:
@@ -136,7 +136,7 @@ def run_pulse(conn: sqlite3.Connection) -> int:
     scores: list[int] = []
     for job in unscored:
         score = compute_pulse_score(job)
-        update_job_pulse_score(conn, job["id"], score)
+        update_pulse_score(conn, job["id"], score)
         scores.append(score)
 
     conn.commit()

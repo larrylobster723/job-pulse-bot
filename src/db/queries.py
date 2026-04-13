@@ -16,12 +16,14 @@ __all__ = [
     "mark_raw_job_processed",
     "insert_job",
     "job_url_exists",
+    "get_all_job_titles_companies",
     "get_unscored_jobs",
-    "update_job_pulse_score",
+    "update_pulse_score",
     "get_unposted_jobs",
     "mark_job_posted",
     "insert_pipeline_run",
     "finish_pipeline_run",
+    "log_pipeline_run",
     "get_pipeline_status",
 ]
 
@@ -110,6 +112,26 @@ def mark_raw_job_processed(conn: sqlite3.Connection, raw_job_id: int) -> None:
 # ---------------------------------------------------------------------------
 
 
+def get_all_job_titles_companies(
+    conn: sqlite3.Connection,
+) -> list[tuple[str, str, int]]:
+    """Return (title, company, id) tuples for every row in the jobs table.
+
+    Used by the dedup agent to fuzzy-match incoming jobs against all already-
+    seen canonical jobs without loading full row dicts.
+
+    Args:
+        conn: Active SQLite connection.
+
+    Returns:
+        List of (title, company, id) tuples ordered by id.
+    """
+    rows = conn.execute(
+        "SELECT title, company, id FROM jobs ORDER BY id"
+    ).fetchall()
+    return [(row[0], row[1], row[2]) for row in rows]
+
+
 def job_url_exists(conn: sqlite3.Connection, url: str) -> bool:
     """Check whether a canonical job URL already exists in the jobs table.
 
@@ -182,7 +204,7 @@ def get_unscored_jobs(conn: sqlite3.Connection) -> list[dict[str, Any]]:
     return [dict(row) for row in rows]
 
 
-def update_job_pulse_score(
+def update_pulse_score(
     conn: sqlite3.Connection, job_id: int, score: int
 ) -> None:
     """Write pulse_score and scored_at for a jobs row.
@@ -279,6 +301,36 @@ def finish_pipeline_run(
         WHERE id = ?
         """,
         (_now_utc(), jobs_processed, status, run_id),
+    )
+
+
+def log_pipeline_run(
+    conn: sqlite3.Connection,
+    agent: str,
+    jobs_processed: int,
+    status: str,
+    started_at: str,
+) -> None:
+    """Insert a completed pipeline_runs record in a single call.
+
+    Convenience function for after-the-fact logging where both the start time
+    and outcome are already known. For in-progress tracking use
+    :func:`insert_pipeline_run` and :func:`finish_pipeline_run` instead.
+
+    Args:
+        conn: Active SQLite connection.
+        agent: Agent name (e.g. "recon").
+        jobs_processed: Number of jobs processed in this run.
+        status: Final status string (e.g. "success" or "error").
+        started_at: ISO-8601 UTC timestamp when the run began.
+    """
+    conn.execute(
+        """
+        INSERT INTO pipeline_runs
+            (agent, started_at, finished_at, jobs_processed, status)
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (agent, started_at, _now_utc(), jobs_processed, status),
     )
 
 

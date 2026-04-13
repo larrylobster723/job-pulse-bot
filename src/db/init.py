@@ -36,7 +36,11 @@ def init_db(db_path: str) -> None:
 if __name__ == "__main__":
     import sys
 
-    from src.config import DB_PATH, LOG_LEVEL
+    try:
+        from src.config import DB_PATH, LOG_LEVEL
+    except RuntimeError:
+        DB_PATH = "jobs.db"
+        LOG_LEVEL = "INFO"
 
     logging.basicConfig(level=getattr(logging, LOG_LEVEL))
     path = sys.argv[1] if len(sys.argv) > 1 else DB_PATH
