@@ -110,20 +110,34 @@ Proceed to Step 2 below.
 
 ## Step 2 — Run setup
 
+### Prerequisites
+You need a terminal (command line) open on your computer:
+- **macOS** — press `Cmd + Space`, type `Terminal`, press Enter
+- **Windows** — install WSL2 first: [microsoft.com/windows/wsl](https://learn.microsoft.com/en-us/windows/wsl/install), then open "Ubuntu" from the Start menu
+- **Linux** — open your terminal app
+
+### Commands to run
+
+Type these one line at a time, pressing Enter after each:
+
 ```bash
 git clone https://github.com/larrylobster723/job-pulse-bot.git
 cd job-pulse-bot
-make setup
+bash setup.sh
 ```
 
-`make setup` will:
-- Check for Python 3.11+
-- Create a virtual environment
+The setup script will guide you through the rest interactively. It will:
+- Check your system has everything required (Python 3.11+, git, curl)
+- Offer to install Python automatically via Homebrew on macOS if it's missing
+- Create a virtual environment (an isolated Python workspace for this project)
 - Install all dependencies
-- Prompt you for your bot token, guild ID, and channel ID
-- Create `.env` automatically
-- Initialise the SQLite database
-- Verify your bot token is valid
+- Prompt you for your 3 Discord values (bot token, guild ID, channel ID)
+- Validate each value before accepting it
+- Create your `.env` file automatically — no manual file editing needed
+- Initialise the database
+- Verify your bot token works before finishing
+
+If anything goes wrong, the script will tell you exactly what to fix and how.
 
 ---
 
