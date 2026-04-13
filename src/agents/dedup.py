@@ -86,6 +86,7 @@ def parse_salary(salary_raw: str | None) -> tuple[int | None, int | None]:
         return None, None
 
     def _to_int(raw: str, has_k: bool) -> int:
+        """Convert a raw numeric string to an integer, scaling by 1000 if has_k."""
         value = int(raw.replace(",", ""))
         if has_k:
             value *= 1000

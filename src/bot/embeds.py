@@ -38,6 +38,7 @@ def _format_salary(salary_min: int | None, salary_max: int | None) -> str | None
         return None
 
     def _fmt(value: int) -> str:
+        """Format an integer USD value as a short string like $80K."""
         return f"${value // 1000}K"
 
     if min_val is not None and max_val is not None:

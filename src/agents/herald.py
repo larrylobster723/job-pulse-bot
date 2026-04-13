@@ -64,6 +64,7 @@ async def run_herald(
         embed = build_job_embed(job)
 
         async def _send() -> None:
+            """Send the embed to the channel (extracted for retry logic)."""
             await channel.send(embed=embed)
 
         try:
