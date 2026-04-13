@@ -1,10 +1,10 @@
 .PHONY: setup run test
 
 setup:
-	pip install -r requirements.txt && python -m src.db.init
+	bash setup.sh
 
 run:
-	caffeinate -i python -m src.bot.main
+	caffeinate -i .venv/bin/python -m src.bot.main
 
 test:
-	pytest tests/ -v
+	.venv/bin/python -m pytest tests/ -v
