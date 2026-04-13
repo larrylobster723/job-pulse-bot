@@ -369,6 +369,7 @@ def get_pipeline_status(conn: sqlite3.Connection) -> dict[str, Any]:
         """
         SELECT agent, started_at, finished_at, jobs_processed, status
         FROM pipeline_runs
+        WHERE finished_at IS NOT NULL
         ORDER BY id DESC LIMIT 1
         """
     ).fetchone()
